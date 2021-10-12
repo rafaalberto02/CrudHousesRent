@@ -10,15 +10,15 @@ services:
     image: mysql
     restart: always
     environment:
-      - MYSQL_DATABASE=locacaoimoveis
-      - MYSQL_ALLOW_EMPTY_PASSWORD=null
-      - MYSQL_RANDOM_ROOT_PASSWORD=null
-      - MYSQL_ROOT_PASSWORD=password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: housesrent
+      MYSQL_USER: housesrent
+      MYSQL_PASSWORD: 123456
     ports:
       - '3306:3306'
     volumes:
       - database:/var/lib/mysql
-      - $HOME/Desktop/MySQL-Snippets/dbscript.sql:/dbscript.sql
+      - ./dbscript.sql:/docker-entrypoint-initdb.d/0_init.sql
     networks:
       - database
 
