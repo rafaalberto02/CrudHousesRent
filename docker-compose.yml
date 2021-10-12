@@ -1,0 +1,39 @@
+volumes:
+  database:
+
+networks:
+  api:
+  database:
+
+services:
+  crudhousesrentdb:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=locacaoimoveis
+      - MYSQL_ALLOW_EMPTY_PASSWORD=null
+      - MYSQL_RANDOM_ROOT_PASSWORD=null
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - '3306:3306'
+    volumes:
+      - database:/var/lib/mysql
+      - $HOME/Desktop/MySQL-Snippets/dbscript.sql:/dbscript.sql
+    networks:
+      - database
+
+  crudhousesrentapi:
+    image: rafaalberto/crudhousesrentapi:latest
+    container_name: crudhousesrentapi
+    networks:
+      - database
+      - api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    environment:
+      - DBHOST=crudhousesrentdb
+    depends_on:
+      - crudhousesrentdb
