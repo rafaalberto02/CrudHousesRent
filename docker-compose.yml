@@ -10,10 +10,10 @@ services:
     image: mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: housesrent
+      MYSQL_RANDOM_ROOT_PASSWORD: 1
       MYSQL_USER: housesrent
       MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: housesrent
     ports:
       - '3306:3306'
     volumes:
