@@ -2,6 +2,7 @@ using System.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +34,6 @@ namespace Infrastructure.Repositories
 
             try
             {
-                _logger.LogTrace(_connection);
                 using (var conn = new MySqlConnection(_connection))
                 {
                     if (conn.State == ConnectionState.Closed) conn.Open();
@@ -52,7 +52,28 @@ namespace Infrastructure.Repositories
 
         public async Task<Immobile> getById(int id)
         {
-            throw new System.NotImplementedException();
+            string sql = "SELECT * FROM Immobile I INNER JOIN Address A WHERE I.idAddress = A.id AND I.id = @id ;";
+
+            try
+            {
+                using (var conn = new MySqlConnection(_connection))
+                {
+                    if (conn.State == ConnectionState.Closed) conn.Open();
+
+                    DynamicParameters parameters = new DynamicParameters();
+
+                    parameters.Add("@id", id);
+
+                    var immobile = await conn.QueryAsync<Immobile, Address, Immobile>(sql: sql, param: parameters, map: (immobile, address) => { immobile.address = address; return immobile; }, splitOn: "id");
+
+                    return immobile.FirstOrDefault<Immobile>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
         }
 
         public async Task<Immobile> insert(Immobile immobile)

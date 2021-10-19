@@ -27,5 +27,13 @@ namespace Application.Controllers
 
             return Ok(_map.Map<IEnumerable<Immobile>>(immobiles));
         }
+
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> getById(int id)
+        {
+            var immobile = await _rep.getById(id);
+
+            return Ok(_map.Map<Immobile>(immobile));
+        }
     }
 }
