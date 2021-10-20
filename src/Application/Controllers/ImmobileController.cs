@@ -35,5 +35,13 @@ namespace Application.Controllers
 
             return Ok(_map.Map<Immobile>(immobile));
         }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> delete(int id)
+        {
+            var deleted = await _rep.delete(id);
+
+            return Ok(deleted ? "Successfully deleted" : "Not deleted");
+        }
     }
 }

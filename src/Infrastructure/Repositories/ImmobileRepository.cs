@@ -25,7 +25,28 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> delete(int id)
         {
-            throw new System.NotImplementedException();
+            string sql = "DELETE FROM Address WHERE id = (SELECT (idAddress) FROM Immobile WHERE id = @id);";
+
+            try
+            {
+                using (var conn = new MySqlConnection(_connection))
+                {
+                    if (conn.State == ConnectionState.Closed) conn.Open();
+
+                    DynamicParameters parameters = new DynamicParameters();
+
+                    parameters.Add("@id", id);
+
+                    var deleted = await conn.ExecuteAsync(sql: sql, param: parameters);
+
+                    return deleted > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
         }
 
         public async Task<IEnumerable<Immobile>> getAll()
